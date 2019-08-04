@@ -1,0 +1,10 @@
+.snake-playground{
+  position: relative;
+  background-color: aquamarine;
+}
+.snake-cell{
+  background-color: red;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+}
