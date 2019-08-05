@@ -8,3 +8,9 @@
   height: 10px;
   position: absolute;
 }
+.food-cell{
+  background-color: green;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+}

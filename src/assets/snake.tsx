@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { position } from '../index.d';
 import { add } from '../lib/matrix';
 import { die } from '../lib/judge';
+import { throwFood, eatFood } from '../lib/food';
 import { BBox, SnakeSpace } from '../index.d';
 import './snake.css';
 
@@ -21,7 +22,7 @@ const moveTo: {
   top: [0, -1],
   bottom: [0, 1],
   left: [-1, 0],
-  right: [0, 1]
+  right: [1, 0]
 }
 const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
   const { playground } = props;
@@ -31,8 +32,11 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
       Math.round((playground[0][1] + playground[1][1]) / 2)
     ]
   ];
+  initSpace.push([initSpace[0][0] + 1, initSpace[0][1]])
   const [space, setSpace] = useState(initSpace);
   const [direction, setDirection] = useState(moveTo.top);
+  const initFood: position = throwFood(space, playground);
+  const [food, setFood] = useState(initFood);
   // const currentDirection = useRef(direction);
 
   useEffect(() => {
@@ -43,12 +47,19 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
           console.log('die!!');
           return [];
         }
-        const newSpace = [add(space[0], direction),
-          ...space.slice(1).map((cell, index) => space[index - 1])
+        let newSpace: SnakeSpace;
+        newSpace = [
+          add(space[0], direction),
+          ...space.slice(0, -1)
         ];
+        if (eatFood(space, food)) {
+          newSpace.push(space[space.length - 1]);
+          console.log('eat', space, newSpace)
+          setFood(throwFood(newSpace, playground));
+        }
         return newSpace;
       });
-    }, 500);
+    }, 200);
     const clearRound = () => {
       clearInterval(round);
       setSpace(initSpace);
@@ -57,7 +68,7 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
       console.log('unmount')
       clearInterval(round);
     }
-  }, [direction]);
+  }, [direction, food]);
 
   useEffect(() => {
     const keyMap: { [key: string]: string } = {
@@ -67,23 +78,21 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
       D: 'right'
     }
     const keyHandler = (e: KeyboardEvent) => {
-      console.log('l')
       let key = String.fromCharCode(e.keyCode);
       if (key in keyMap) {
-        console.log(moveTo[keyMap[key]])
         setDirection(moveTo[keyMap[key]]);
       }
     }
-    console.log(true)
     document.addEventListener('keydown', keyHandler)
     return () => {
       document.removeEventListener('keydown', keyHandler);
     }
   }, [])
-  const width = BLOCK_SIZE * (playground[1][0] - playground[0][0]);
-  const height = BLOCK_SIZE * (playground[1][1] - playground[0][1]);
+  const width = BLOCK_SIZE * (playground[1][0] - playground[0][0] + 1);
+  const height = BLOCK_SIZE * (playground[1][1] - playground[0][1] + 1);
   return (
     <div className="snake-playground" style={{ width, height}}>
+    <div className="food-cell" style={{ left: food[0] * BLOCK_SIZE, top: food[1] * BLOCK_SIZE}}></div>
       {
         space.map((cell, index) => {
           return <div key={`cell-${index}`} className="snake-cell" style={{ left: cell[0] * BLOCK_SIZE, top: cell[1] * BLOCK_SIZE }} />
