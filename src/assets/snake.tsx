@@ -10,7 +10,8 @@ const BLOCK_SIZE = 10;
 
 interface SnakeProps {
   length: number;
-  playground: BBox
+  playground: BBox;
+  mode: 'easy' | 'medium' | 'hard' | 'crazy'
 }
 const moveTo: {
   top: position;
@@ -24,8 +25,19 @@ const moveTo: {
   left: [-1, 0],
   right: [1, 0]
 }
+const modeSpeed: {[key: string]: number} = {
+  easy: 1000,
+  medium: 500,
+  hard: 200,
+  crazy: 50
+}
+const COLOR: {[key: string]: string} = {
+  snake: '#d4380d',
+  background: '#f4ffb8',
+  food: '#eb2f96'
+}
 const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
-  const { playground } = props;
+  const { playground, mode } = props;
   const initSpace: SnakeSpace = [
     [
       Math.round((playground[0][0] + playground[1][0]) / 2),
@@ -59,7 +71,7 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
         }
         return newSpace;
       });
-    }, 200);
+    }, modeSpeed[mode]);
     const clearRound = () => {
       clearInterval(round);
       setSpace(initSpace);
@@ -68,7 +80,7 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
       console.log('unmount')
       clearInterval(round);
     }
-  }, [direction, food]);
+  }, [direction, food, mode]);
 
   useEffect(() => {
     const keyMap: { [key: string]: string } = {
@@ -88,16 +100,20 @@ const Snake: React.FC<SnakeProps> = (props: SnakeProps) => {
       document.removeEventListener('keydown', keyHandler);
     }
   }, [])
-  const width = BLOCK_SIZE * (playground[1][0] - playground[0][0] + 1);
-  const height = BLOCK_SIZE * (playground[1][1] - playground[0][1] + 1);
+  const width = BLOCK_SIZE * (playground[1][0] - playground[0][0]);
+  const height = BLOCK_SIZE * (playground[1][1] - playground[0][1]);
   return (
-    <div className="snake-playground" style={{ width, height}}>
-    <div className="food-cell" style={{ left: food[0] * BLOCK_SIZE, top: food[1] * BLOCK_SIZE}}></div>
+    <div className="snake-playground" style={{ width, height, backgroundColor: COLOR.background }}>
+      <svg width={width} height={height}>
+      <rect x={food[0] * BLOCK_SIZE} y={food[1] * BLOCK_SIZE} width={BLOCK_SIZE} height={BLOCK_SIZE} style={{fill: COLOR.food}} />
+      <g style={{ fill: COLOR.snake }}>
       {
         space.map((cell, index) => {
-          return <div key={`cell-${index}`} className="snake-cell" style={{ left: cell[0] * BLOCK_SIZE, top: cell[1] * BLOCK_SIZE }} />
+          return <rect key={`cell-${index}`} x={cell[0] * BLOCK_SIZE} y={cell[1] * BLOCK_SIZE} width={BLOCK_SIZE} height={BLOCK_SIZE} />
         })
       }
+      </g>
+      </svg>
     </div>
   )
 }

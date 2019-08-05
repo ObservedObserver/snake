@@ -4,4 +4,6 @@ type SnakeSpace = Array<position>;
 
 type BBox = [[number, number], [number, number]];
 
-export { position, SnakeSpace, BBox };
+type mode = 'easy' | 'medium' | 'hard' | 'crazy';
+
+export { position, SnakeSpace, BBox, Mode };
