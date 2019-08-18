@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Snake from './assets/snake';
 import styled from 'styled-components';
 import Container from '@material-ui/core/Container';
