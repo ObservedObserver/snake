@@ -1,4 +1,4 @@
-import { position } from '../index.d'
+import { position } from '../types'
 function add(vec1: position, vec2: position): position {
   return [vec1[0] + vec2[0], vec1[1] + vec2[1]];
 }
@@ -10,4 +10,8 @@ function multiply(vec: position, k: number): position {
   return [result[0], result[1]];
 }
 
-export { add, multiply, equal };
+function isOpposite(vec1: position, vec2: position) {
+  return equal(add(vec1, vec2), [0, 0]);
+}
+
+export { add, multiply, equal, isOpposite };

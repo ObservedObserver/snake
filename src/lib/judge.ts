@@ -1,4 +1,4 @@
-import { SnakeSpace, BBox } from '../index.d';
+import { SnakeSpace, BBox } from '../types';
 
 function bbox(space: SnakeSpace): BBox {
   let left = Math.min(...space.map(item => item[0]));

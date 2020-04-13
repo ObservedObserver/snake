@@ -1,4 +1,4 @@
-import { SnakeSpace, position, BBox } from "../index.d";
+import { SnakeSpace, position, BBox } from "../types";
 import { equal } from './matrix';
 
 function throwFood (space: SnakeSpace, playground: BBox): position {
@@ -7,7 +7,7 @@ function throwFood (space: SnakeSpace, playground: BBox): position {
     left + Math.round(Math.random() * (right - left)),
     top + Math.round(Math.random() * (bottom - top))
   ];
-  console.log(space, food)
+  // eslint-disable-next-line
   while (space.findIndex(cell => equal(food, cell)) > -1) {
     food = [
       left + Math.round(Math.random() * (right - left)),

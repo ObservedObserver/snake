@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import Snake from './assets/snake';
 import styled from 'styled-components';
 import Container from '@material-ui/core/Container';
@@ -10,7 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import { Mode } from './index.d';
+import { MODES } from './types';
+import { MODE_SPEED } from './assets/interval';
 
 const WideDivider = styled(Divider)`
   margin-top: 4px;
@@ -23,58 +24,59 @@ const SpaceDiv = styled.div`
   padding: 1rem;
 `;
 
-const App: React.FC = () => {
-  const initMode: Mode = 'easy';
-  const [mode, setMode] = React.useState(initMode);
+const modeList = Object.keys(MODE_SPEED);
 
-  function handleChangeMode(event: React.ChangeEvent<unknown>) {
-    setMode((event.target as HTMLInputElement).value);
-  }
+const App: React.FC = () => {
+  const [mode, setMode] = React.useState(MODES.easy);
+
+  const handleChangeMode = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setMode(event.target.value as MODES);
+    },
+    []
+  );
   return (
     <Container maxWidth="md">
       <Paper>
         <div className="App">
-          <Snake length={1} playground={[[0, 0], [80, 60]]} mode={mode}></Snake>
+          <Snake
+            length={1}
+            playground={[
+              [0, 0],
+              [80, 60],
+            ]}
+            mode={mode}
+          ></Snake>
         </div>
         <WideDivider variant="middle" />
         <SpaceDiv>
-          <Button variant="contained" color="secondary">Restart</Button>
+          <Button variant="contained" color="secondary">
+            Restart
+          </Button>
         </SpaceDiv>
         <WideDivider variant="middle" />
         <SpaceDiv>
           <FormControl component="fieldset">
             <FormLabel component="legend">Game Mode</FormLabel>
-            <RadioGroup aria-label="position" name="position" value={mode} onChange={handleChangeMode} row>
-              <FormControlLabel
-                value="easy"
-                control={<Radio color="primary" />}
-                label="easy"
-                labelPlacement="end"
-              />
-              <FormControlLabel
-                value="medium"
-                control={<Radio color="primary" />}
-                label="Medium"
-                labelPlacement="end"
-              />
-              <FormControlLabel
-                value="hard"
-                control={<Radio color="primary" />}
-                label="Hard"
-                labelPlacement="end"
-              />
-              <FormControlLabel
-                value="crazy"
-                control={<Radio color="primary" />}
-                label="Crazy"
-                labelPlacement="end"
-              />
+            <RadioGroup
+              aria-label="position"
+              name="position"
+              value={mode}
+              onChange={handleChangeMode}
+              row
+            >
+              {modeList.map((mode) => (
+                <FormControlLabel
+                  value={mode}
+                  control={<Radio color="primary" />}
+                  label={mode}
+                  labelPlacement="end"
+                />
+              ))}
             </RadioGroup>
           </FormControl>
         </SpaceDiv>
-        
       </Paper>
- 
     </Container>
   );
 }
